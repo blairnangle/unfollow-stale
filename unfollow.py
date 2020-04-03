@@ -1,10 +1,6 @@
 from tweepy import API
 
-import config_loader
-from authenticate import authenticate
 from time_utils import current_epoch_minus_days, time_to_epoch
-
-config: dict = config_loader.load_config()
 
 
 def unfollow_friend(user_id: int, no_tweets: bool, api: API, last_tweet=None) -> None:
@@ -20,9 +16,7 @@ def unfollow_friend(user_id: int, no_tweets: bool, api: API, last_tweet=None) ->
     print('Unfollowed @{friend}. {reason}\n'.format(friend=screen_name, reason=reason))
 
 
-def unfollow_stale_friends(number_of_days: int) -> None:
-    api = authenticate()
-
+def unfollow_stale_friends(days: int, api: API) -> None:
     unfollowed = 0
 
     friends_ids: list = api.friends_ids()
@@ -38,7 +32,7 @@ def unfollow_stale_friends(number_of_days: int) -> None:
 
         epoch_last_tweet: int = time_to_epoch(str(last_tweet.created_at))
 
-        if epoch_last_tweet < current_epoch_minus_days(number_of_days):
+        if epoch_last_tweet < current_epoch_minus_days(days):
             unfollow_friend(user_id=user_id, no_tweets=False, api=api, last_tweet=last_tweet)
             unfollowed += 1
 
