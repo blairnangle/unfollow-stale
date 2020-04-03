@@ -1,4 +1,4 @@
-name: Execute every 30 mins
+name: Execute on the 30th minute of every hour
 
 on:
   schedule:
