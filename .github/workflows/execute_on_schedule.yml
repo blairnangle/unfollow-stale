@@ -17,11 +17,8 @@ jobs:
     - name: Create virtual environment
       run: python3 -m venv .venv
 
-    - name: Source virtual environment
-      run: source .venv/bin/activate
-
-    - name: Install requirements
-      run: pip install -r requirements.txt
-
-    - name: Execute
-      run: ./execute.py ${{secrets.consumer_key}} ${{secrets.consumer_secret}} ${{secrets.access_key}} ${{secrets.access_secret}} 
+    - name: Source virtual environment, install requirements and execute
+      run: |
+        source .venv/bin/activate
+        pip install -r requirements.txt
+        ./execute.py ${{secrets.consumer_key}} ${{secrets.consumer_secret}} ${{secrets.access_key}} ${{secrets.access_secret}}
