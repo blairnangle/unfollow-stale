@@ -1,0 +1,24 @@
+name: Execute every 30 mins
+
+on:
+  schedule:
+    - cron:  '30 * * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Create virtual environment
+      run: python3 -m venv .venv
+    
+    - name: Source virtual environment
+      run: source .venv/bin/activate
+
+    - name: Install requirements
+      run: pip install -r requirements.txt
+    
+    - name: Execute
+      run: ./execute.py ${{secrets.consumer_key}} ${{secrets.consumer_secret}} ${{secrets.access_key}} ${{secrets.access_secret}} 
