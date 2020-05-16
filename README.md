@@ -62,3 +62,7 @@ To run the script (the virtual environment needs to have been activated using [a
 ```bash
 $ ./execute.py
 ```
+
+## License
+
+Distributed under [MIT License](./LICENSE).
