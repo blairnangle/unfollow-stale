@@ -1,42 +1,28 @@
-from tweepy import API
+from tweepy import Client
 
 from time_utils import current_epoch_minus_days, time_to_epoch
 
 
-def unfollow_friend(user_id: int, no_tweets: bool, api: API, last_tweet=None) -> None:
-    screen_name: str = api.get_user(user_id=user_id).__getattribute__('screen_name')
-    api.destroy_friendship(screen_name=screen_name)
+def unfollow_stale_accounts(days: int, client: Client) -> None:
+    my_id: int = client.get_me().data.id
+    following_ids: [(str, str)] = [(user.data["id"], user.data["username"]) for user in client.get_users_following(id=my_id, max_results=1000, user_auth=True).data]
 
-    if no_tweets:
-        reason = 'They do not have any tweets, they may never have tweeted.'
-    else:
-        reason = 'They last tweeted on {date} at {time}.'.format(date=str(last_tweet.created_at).split()[0],
-                                                                 time=str(last_tweet.created_at).split()[1])
-
-    print('Unfollowed @{friend}. {reason}\n'.format(friend=screen_name, reason=reason))
-
-
-def unfollow_stale_friends(days: int, api: API) -> None:
     unfollowed = 0
-
-    friends_ids: list = api.friends_ids()
-
-    for user_id in friends_ids:
-        friends_tweets = api.user_timeline(user_id=user_id, count=1)
-        if not friends_tweets:
-            unfollow_friend(user_id=user_id, no_tweets=True, api=api)
+    for user_id, username in following_ids:
+        response = client.get_users_tweets(id=user_id, max_results=5, user_auth=True, tweet_fields=["created_at"])
+        if response.data is None:
+            client.unfollow_user(target_user_id=user_id)
+            print(f"Unfollowed @{username}. They have never tweeted.")
             unfollowed += 1
-            continue
+        else:
+            most_recent_tweet_timestamp: str = response.data[0].data["created_at"]
+            epoch_last_tweet: int = time_to_epoch(str(most_recent_tweet_timestamp))
 
-        last_tweet = friends_tweets[0]
+            if epoch_last_tweet < current_epoch_minus_days(days):
+                client.unfollow_user(target_user_id=user_id)
+                print(f"Unfollowed @{username}. They last tweeted on {most_recent_tweet_timestamp.split('T')[0]}.")
+                unfollowed += 1
 
-        epoch_last_tweet: int = time_to_epoch(str(last_tweet.created_at))
+    new_following_ids: [int] = [user.data["id"] for user in client.get_users_following(id=my_id, max_results=1000, user_auth=True).data]
 
-        if epoch_last_tweet < current_epoch_minus_days(days):
-            unfollow_friend(user_id=user_id, no_tweets=False, api=api, last_tweet=last_tweet)
-            unfollowed += 1
-
-    print(
-        'Unfollowed {unfollowed} accounts. You are now following {new_friends} accounts.'.format(unfollowed=unfollowed,
-                                                                                                 new_friends=len(
-                                                                                                     api.friends_ids())))
+    print(f"Unfollowed {unfollowed} accounts. You are now following {len(new_following_ids)} accounts.")

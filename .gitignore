@@ -2,12 +2,10 @@
 __pycache__
 
 # Environments
-.venv
+venv
 
 # IntelliJ config
 .idea
 
-# git-secret
-!*.secret
-.gitsecret/keys/random_seed
-auth_config.yml
+# Project-specific Git commit message prefix (to configure: git config commit.template .gitmessage)
+.gitmessage

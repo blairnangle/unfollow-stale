@@ -1,4 +1,4 @@
-# Unfollow Stale
+# unfollow-stale
 
 Script to unfollow Twitter accounts that have gone a specified number of days without tweeting.
 
@@ -15,19 +15,19 @@ Makes use of the [Twitter API](https://developer.twitter.com/en/docs/api-referen
 
 * Create a virtual environment:
 
-```bash
-$ python3 -m venv .venv
+```shell
+python3 -m venv venv
 ```
 * Activate the virtual environment:
 
-```bash
-$ source .venv/bin/activate
+```shell
+source venv/bin/activate
 ```
 
 * Install requirements:
 
-```bash
-$ pip install -r requirements.txt
+```shell
+pip install -r requirements.txt
 ```
 
 ## Usage
@@ -42,25 +42,28 @@ app:
 
 Accept the terms, go to "Keys and tokens" and generate an access token and secret key.
 
-### Configuring
+### Authentication
 
-Add your keys and tokens from your Twitter app to `config.yml`:
+#### Local
 
-```yaml
-auth:
-  consumer_key: 'your consumer key'
-  consumer_secret: 'your consumer secret'
-  access_key: 'your access key'
-  access_secret: 'your access secret'
-days: 365  # Accounts with their most recent tweet further in the past than this will be unfollowed
+```shell
+export CONSUMER_KEY=<insert consumer key>
+export CONSUMER_KEY_SECRET=<insert consumer key secret>
+export ACCESS_TOKEN=<insert access token>
+export ACCESS_TOKEN_SECRET=<insert access token secret>
 ```
+
+#### GitHub Actions
+
+The environment variables above should be stored as GitHub Actions Secrets.
 
 ### Executing
 
-To run the script (the virtual environment needs to have been activated using [above instructions](#installation)):
+To run the script (the virtual environment needs to have been activated using [above instructions](#installation)
+and the credentials need to have been exported as env vars):
 
 ```bash
-$ ./execute.py
+$ ./go.py
 ```
 
 ## License
