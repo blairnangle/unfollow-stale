@@ -1,6 +1,8 @@
 name: unfollow
 
-on: push
+on:
+  schedule:
+    - cron: "0 6 * * 1"
 
 jobs:
   go:
