@@ -1,5 +1,7 @@
 # unfollow-stale
 
+[![unfollow](https://github.com/blairnangle/unfollow-stale/actions/workflows/unfollow.yml/badge.svg)](https://github.com/blairnangle/unfollow-stale/actions/workflows/unfollow.yml)
+
 Script to unfollow Twitter accounts that have gone a specified number of days without tweeting.
 
 Makes use of the [Twitter API](https://developer.twitter.com/en/docs/api-reference-index) and 
